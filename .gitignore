@@ -1,0 +1,50 @@
+# --- Java ---
+*.class
+*.jar
+*.war
+*.ear
+
+# --- Logs ---
+*.log
+logs/
+*.out
+
+# --- Maven ---
+target/
+!src/main/resources/
+!src/test/resources/
+.mvn/wrapper/maven-wrapper.jar
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# --- Eclipse ---
+.project
+.classpath
+.settings/
+bin/
+
+# --- VS Code ---
+.vscode/
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+
+# --- Spring Boot ---
+spring.log
+
+# --- MySQL local data (como el socket que causó el error) ---
+mysql/
+*.sock
+
+# --- Others ---
+*.tmp
+*.swp
+*.bak
+*.orig
+*.rej
