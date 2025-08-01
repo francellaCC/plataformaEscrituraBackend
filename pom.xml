@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.apirest</groupId>
-	<artifactId>apirest</artifactId>
+	<artifactId>apirestPlataformaEscritura</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>apirest</name>
 	<description>Demo project for Spring Boot</description>
@@ -37,12 +37,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

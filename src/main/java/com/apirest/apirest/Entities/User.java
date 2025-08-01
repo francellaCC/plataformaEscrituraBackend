@@ -1,9 +1,6 @@
 package com.apirest.apirest.Entities;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -20,13 +17,21 @@ public class User {
    private String email;
 
    @Column(nullable = true)
-   private String profile_picture_url;
+   private String picture;
 
-   public User(Long id, String nameUser, String email, String profile_picture_url) {
+  @Column(nullable = true)
+  private String nickname;
+
+   public User() {
+    
+   }
+
+   public User(Long id, String nameUser, String email, String picture, String nickname) {
       this.id = id;
       this.nameUser = nameUser;
       this.email = email;
-      this.profile_picture_url = profile_picture_url;
+      this.picture = picture;
+      this.nickname = nickname;
    }
 
    public Long getId() {
@@ -53,11 +58,19 @@ public class User {
       this.email = email;
    }
 
-   public String getProfile_picture_url() {
-      return profile_picture_url;
+   public String getPicture() {
+      return picture;
    }
 
-   public void setProfile_picture_url(String profile_picture_url) {
-      this.profile_picture_url = profile_picture_url;
+   public void setPicture(String picture) {
+      this.picture = picture;
+   }
+
+   public void setNickname(String nickname){
+     this.nickname = nickname;
+   }
+
+   public String getNickname( String nickname){
+      return nickname;
    }
 }
