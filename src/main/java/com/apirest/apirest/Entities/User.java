@@ -1,13 +1,16 @@
 package com.apirest.apirest.Entities;
-import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
 public class User {
 
    @Id
-   @GeneratedValue(strategy =  GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
    @Column(nullable = false)
@@ -19,11 +22,15 @@ public class User {
    @Column(nullable = true)
    private String picture;
 
-  @Column(nullable = true)
-  private String nickname;
+   @Column(nullable = true)
+   private String nickname;
+
+   
+   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+   private List<Story> stories = new ArrayList<>();
 
    public User() {
-    
+
    }
 
    public User(Long id, String nameUser, String email, String picture, String nickname) {
@@ -66,11 +73,15 @@ public class User {
       this.picture = picture;
    }
 
-   public void setNickname(String nickname){
-     this.nickname = nickname;
+   public void setNickname(String nickname) {
+      this.nickname = nickname;
    }
 
-   public String getNickname( String nickname){
+   public String getNickname(String nickname) {
       return nickname;
+   }
+
+   public void setStories(List<Story> stories) {
+      this.stories = stories;
    }
 }
