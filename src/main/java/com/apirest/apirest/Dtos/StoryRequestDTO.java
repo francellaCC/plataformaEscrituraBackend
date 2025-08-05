@@ -4,11 +4,34 @@ public class StoryRequestDTO {
 
    private String title;
    private String description;
+   private String genre;
    private String coverImageUrl;
    private String visibility;
    private String status;
 
+   public StoryRequestDTO(String title, String description, String genre, String coverImageUrl, String visibility,
+         String status) {
+      this.title = title;
+      this.description = description;
+      this.genre = genre;
+      this.coverImageUrl = coverImageUrl;
+      this.visibility = visibility;
+      this.status = status;
+   }
+
+
+
    public StoryRequestDTO() {
+   }
+
+   
+
+   public String getGenre() {
+      return genre;
+   }
+
+   public void setGenre(String genre) {
+      this.genre = genre;
    }
 
    public String getTitle() {

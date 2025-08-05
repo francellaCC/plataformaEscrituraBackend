@@ -26,16 +26,16 @@ public class Story {
    @Column(nullable = true)
    private String description;
 
-   @Column(nullable = false)
+   @Column(nullable = true)
    private String genre;
 
    @Column(nullable = true)
    private String coverImageUrl;
 
-   @Column(nullable = false)
+   @Column(nullable = true)
    private String visibility;
 
-   @Column(nullable = false)
+   @Column(nullable = true)
    private String status;
 
    @Column(name = "created_at")
