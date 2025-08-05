@@ -1,8 +1,14 @@
 package com.apirest.apirest.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +24,17 @@ public class StoryService {
 
    @Autowired
    private StoryRepository storyRepository;
+
+   @Autowired
    private UserRepository userRepository;
 
    public StoryResponseDTO createStory(StoryRequestDTO dto, String email) {
       User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+      System.err.println(dto.getGenre());
       Story story = new Story();
       story.setTitle(dto.getTitle());
+      story.setGenre(dto.getGenre());
       story.setDescription(dto.getDescription());
       story.setCoverImageUrl(dto.getCoverImageUrl());
       story.setVisibility(dto.getVisibility());
@@ -34,5 +44,52 @@ public class StoryService {
 
       Story saved = storyRepository.save(story);
       return new StoryResponseDTO(saved);
+   }
+
+   public List<StoryResponseDTO> getUserStories(String email) {
+      User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+      return storyRepository.findByAuthorId(user.getId())
+            .stream()
+            .map(StoryResponseDTO::new)
+            .collect(Collectors.toList());
+   }
+
+   public StoryResponseDTO getStoryById(Long id) {
+      Story story = storyRepository.findStoryById(id)
+            .orElseThrow(() -> new RuntimeException("Story not found with id: " + id));
+      return new StoryResponseDTO(story);
+   }
+
+   public StoryResponseDTO updateStory(Long id, StoryRequestDTO storyRequestDTO, String email) {
+      Optional<User> existingUser = userRepository.findByEmail(email);
+
+      if (existingUser.isPresent()) {
+         Story story = storyRepository.findStoryById(id)
+               .orElseThrow(() -> new RuntimeException("Story not found with id: " + id));
+
+         story.setTitle(storyRequestDTO.getTitle());
+         story.setDescription(storyRequestDTO.getDescription());
+         story.setCoverImageUrl(storyRequestDTO.getCoverImageUrl());
+         story.setGenre(storyRequestDTO.getGenre());
+         story.setVisibility(storyRequestDTO.getVisibility());
+         story.setStatus(storyRequestDTO.getStatus());
+
+         Story updatedStory = storyRepository.save(story);
+         return new StoryResponseDTO(updatedStory);
+      } else {
+         return null;
+      }
+
+   }
+
+   public void deleteStory(Long id, String email) {
+
+      Optional<User> existingUser = userRepository.findByEmail(email);
+      Story story = storyRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Story not found with id: " + id));
+      
+     if (existingUser.isPresent()) {
+      storyRepository.delete(story);
+     }
    }
 }
