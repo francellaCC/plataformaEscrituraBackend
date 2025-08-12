@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,4 +33,20 @@ public class ChapterController {
       return ResponseEntity.ok(chapterService.createChapter(chapterRequestDTO, email, storyId));
    }
 
+   @PutMapping("/update/{storyId}/{chapterId}")
+   public ResponseEntity<ChapterResponseDTO> updateChapter(@PathVariable Long storyId, @PathVariable Long chapterId,
+         @RequestBody ChapterRequestDTO chapterRequestDTO,
+         @AuthenticationPrincipal Jwt jwt) {
+
+      String email = jwt.getClaimAsString("email");
+      return ResponseEntity.ok(chapterService.updateChapter(storyId, chapterId, chapterRequestDTO, email));
+   }
+
+
+     @DeleteMapping("/delete/{id}")
+  public ResponseEntity<Void> deleteStory(@PathVariable Long storyId,@PathVariable Long chapterId , @AuthenticationPrincipal Jwt jwt) {
+    String email = jwt.getClaimAsString("email");
+    
+    return ResponseEntity.noContent().build();
+  }
 }

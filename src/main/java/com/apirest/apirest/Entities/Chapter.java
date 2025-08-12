@@ -28,6 +28,8 @@ public class Chapter {
    @Column(name = "created_at")
    private LocalDateTime createdAt;
 
+   
+
    public Chapter() {
    }
 
