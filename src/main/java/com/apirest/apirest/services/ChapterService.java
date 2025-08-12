@@ -1,7 +1,7 @@
 package com.apirest.apirest.services;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +16,6 @@ import com.apirest.apirest.Repositories.ChapterRepository;
 import com.apirest.apirest.Repositories.StoryRepository;
 import com.apirest.apirest.Repositories.UserRepository;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-
 @Service
 public class ChapterService {
 
@@ -29,22 +27,62 @@ public class ChapterService {
    @Autowired
    private UserRepository userRepository;
 
-   public ChapterResponseDTO createChapter(@RequestBody ChapterRequestDTO dto, String email, Long story_id) {
+   public ChapterResponseDTO createChapter(ChapterRequestDTO dto, String email, Long storyId) {
 
-      User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-      Story story = storyRepository.findStoryById(story_id).orElseThrow(() -> new RuntimeException("Story not found"));
-
-      if (!story.getAuthor().getId().equals(user.getId())) {
-         throw new RuntimeException("Access denied");
-      }
+      Story story = validateStoryOwnership(storyId, email);
 
       Chapter chapter = new Chapter();
       chapter.setTitle(dto.getTitle());
       chapter.setStory(story);
       chapter.setCreatedAt(LocalDateTime.now());
 
-      Chapter savedChapter = chapterRepository.save(chapter);
-      return new ChapterResponseDTO(savedChapter);
+      return new ChapterResponseDTO(chapterRepository.save(chapter));
+   }
+
+   public ChapterResponseDTO updateChapter(Long storyId, Long chapterId, ChapterRequestDTO dto, String email) {
+
+      Story story = validateStoryOwnership(storyId, email);
+
+      Chapter chapter = chapterRepository.findByIdChapter(chapterId)
+            .orElseThrow(() -> new RuntimeException("Chapter not found"));
+
+      // Aseguramos que el capítulo pertenece a la historia indicada
+      if (!chapter.getStory().getId().equals(story.getId())) {
+         throw new RuntimeException("This chapter does not belong to the provided story");
+      }
+
+      chapter.setTitle(dto.getTitle());
+
+      return new ChapterResponseDTO(chapterRepository.save(chapter));
+
+   }
+
+   public void deleteStory(Long storyId, Long chapterId, String email) {
+
+      Story story = validateStoryOwnership(storyId, email);
+
+      Chapter chapter = chapterRepository.findByIdChapter(chapterId)
+            .orElseThrow(() -> new RuntimeException("Chapter not found"));
+
+      // Aseguramos que el capítulo pertenece a la historia indicada
+      if (!chapter.getStory().getId().equals(story.getId())) {
+         throw new RuntimeException("This chapter does not belong to the provided story");
+      }
+
+      chapterRepository.delete(chapter);
+   }
+
+   private Story validateStoryOwnership(Long storyId, String email) {
+      User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+      Story story = storyRepository.findStoryById(storyId)
+            .orElseThrow(() -> new RuntimeException("Story not found"));
+
+      if (!story.getAuthor().getId().equals(user.getId())) {
+         throw new RuntimeException("Access denied");
+      }
+
+      return story;
    }
 }
