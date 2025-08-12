@@ -28,6 +28,10 @@ public class Chapter {
    @Column(name = "created_at")
    private LocalDateTime createdAt;
 
+   public Chapter() {
+   }
+
+
    public Chapter(Long idChapter, String title, Story story, LocalDateTime createdAt) {
       this.idChapter = idChapter;
       this.title = title;
@@ -35,6 +39,7 @@ public class Chapter {
       this.createdAt = createdAt;
    }
 
+   
    public Long getIdChapter() {
       return idChapter;
    }
