@@ -1,13 +1,17 @@
 package com.apirest.apirest.Entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
@@ -28,7 +32,9 @@ public class Chapter {
    @Column(name = "created_at")
    private LocalDateTime createdAt;
 
-   
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Page> pages = new ArrayList<>();
+
 
    public Chapter() {
    }
@@ -74,4 +80,12 @@ public class Chapter {
       this.createdAt = createdAt;
    }
 
+    public List<Page> getPages() {
+      return pages;
+   }
+
+
+    public void setPages(List<Page> pages) {
+       this.pages = pages;
+    }
 }
