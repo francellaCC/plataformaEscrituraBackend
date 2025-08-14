@@ -10,6 +10,6 @@ import com.apirest.apirest.Entities.Page;
 
 @Repository
 public interface PageRepository extends JpaRepository<Page, Long> {
-   List<Page> findByChapterIdOrderByPageNumberAsc(Long chapterId);
+
 
 }
