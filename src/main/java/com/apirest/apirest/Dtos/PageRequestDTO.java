@@ -5,6 +5,9 @@ public class PageRequestDTO {
    private String content;
    private Integer pageNumber;
 
+   public PageRequestDTO() {
+   }
+
    public PageRequestDTO(String content, Integer pageNumber) {
       this.content = content;
       this.pageNumber = pageNumber;
