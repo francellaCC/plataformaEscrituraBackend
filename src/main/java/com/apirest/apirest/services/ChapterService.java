@@ -1,7 +1,9 @@
 package com.apirest.apirest.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.apirest.apirest.Dtos.ChapterRequestDTO;
 import com.apirest.apirest.Dtos.ChapterResponseDTO;
+import com.apirest.apirest.Dtos.StoryResponseDTO;
 import com.apirest.apirest.Entities.Chapter;
 import com.apirest.apirest.Entities.Story;
 import com.apirest.apirest.Entities.User;
@@ -37,6 +40,16 @@ public class ChapterService {
       chapter.setCreatedAt(LocalDateTime.now());
 
       return new ChapterResponseDTO(chapterRepository.save(chapter));
+   }
+
+   public List<ChapterResponseDTO> getAllChapter(String email, Long storyId) {
+
+      Story story = validateStoryOwnership(storyId, email);
+      return chapterRepository.findByStoryId(story.getId())
+            .stream()
+            .map(ChapterResponseDTO::new)
+            .collect(Collectors.toList());
+
    }
 
    public ChapterResponseDTO updateChapter(Long storyId, Long chapterId, ChapterRequestDTO dto, String email) {
