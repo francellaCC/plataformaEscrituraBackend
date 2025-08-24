@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.apirest.apirest.Dtos.ChapterRequestDTO;
 import com.apirest.apirest.Dtos.ChapterResponseDTO;
+import com.apirest.apirest.Dtos.ChapterWithPagesDTO;
 import com.apirest.apirest.services.ChapterService;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,14 @@ public class ChapterController {
       String email = jwt.getClaimAsString("email");
 
       return ResponseEntity.ok(chapterService.getAllChapter(email, storyId));
+   }
+
+   @GetMapping("/getChapter/{storyId}/{chapterId}")
+   public ResponseEntity<ChapterWithPagesDTO> getChapterById(@PathVariable Long storyId, @PathVariable Long chapterId,
+         @AuthenticationPrincipal Jwt jwt) {
+      String email = jwt.getClaimAsString("email");
+
+      return ResponseEntity.ok(chapterService.getChapterWithPages(email, storyId, chapterId));
    }
 
    @PutMapping("/update/{storyId}/{chapterId}")

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.apirest.apirest.Dtos.ChapterRequestDTO;
 import com.apirest.apirest.Dtos.ChapterResponseDTO;
+import com.apirest.apirest.Dtos.ChapterWithPagesDTO;
+import com.apirest.apirest.Dtos.PageResponseDTO;
 import com.apirest.apirest.Dtos.StoryResponseDTO;
 import com.apirest.apirest.Entities.Chapter;
 import com.apirest.apirest.Entities.Story;
@@ -51,6 +53,25 @@ public class ChapterService {
             .collect(Collectors.toList());
 
    }
+
+public ChapterWithPagesDTO getChapterWithPages(String email, Long storyId, Long chapterId) {
+    // Validar que la historia es del usuario
+    Story story = validateStoryOwnership(storyId, email);
+
+    // Cargar capítulo + páginas
+    Chapter chapter = chapterRepository.findChapterWithPages(chapterId, story.getId())
+        .orElseThrow(() -> new RuntimeException("Chapter not found or doesn't belong to the story"));
+
+    // Mapear a DTO sin tocar tus otros responses
+    return new ChapterWithPagesDTO(
+        chapter.getIdChapter(),
+        chapter.getTitle(),
+        chapter.getPages().stream()
+            .map(p -> new PageResponseDTO(p.getId(), p.getPageNumber(), p.getContent()))
+            .toList()
+    );
+}
+
 
    public ChapterResponseDTO updateChapter(Long storyId, Long chapterId, ChapterRequestDTO dto, String email) {
 
