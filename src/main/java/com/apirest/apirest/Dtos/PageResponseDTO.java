@@ -12,6 +12,11 @@ public class PageResponseDTO {
    private LocalDateTime createdAt;
 
 
+   public PageResponseDTO(Long id,  Integer pageNumber, String content) {
+      this.id = id;
+      this.content = content;
+      this.pageNumber = pageNumber;
+   }
    public PageResponseDTO (Page page){
        this.id = page.getId();
       this.content =page.getContent();
@@ -26,6 +31,8 @@ public class PageResponseDTO {
       this.chapterId = chapterId;
       this.createdAt = createdAt;
    }
+   
+   
    public Long getId() {
       return id;
    }
