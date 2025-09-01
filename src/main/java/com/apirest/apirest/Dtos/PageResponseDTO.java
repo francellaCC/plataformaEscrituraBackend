@@ -2,7 +2,7 @@ package com.apirest.apirest.Dtos;
 
 import java.time.LocalDateTime;
 
-import com.apirest.apirest.Entities.Page;
+import com.apirest.apirest.Entities.PageEntity;
 
 public class PageResponseDTO {
    private Long id;
@@ -12,12 +12,13 @@ public class PageResponseDTO {
    private LocalDateTime createdAt;
 
 
+   public PageResponseDTO(){}
    public PageResponseDTO(Long id,  Integer pageNumber, String content) {
       this.id = id;
       this.content = content;
       this.pageNumber = pageNumber;
    }
-   public PageResponseDTO (Page page){
+   public PageResponseDTO (PageEntity page){
        this.id = page.getId();
       this.content =page.getContent();
       this.pageNumber = page.getPageNumber();
