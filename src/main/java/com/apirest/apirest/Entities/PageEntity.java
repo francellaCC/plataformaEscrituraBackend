@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "pages")
-public class Page {
+public class PageEntity {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
@@ -36,10 +36,10 @@ public class Page {
    private LocalDateTime createdAt;
 
    
-   public Page() {
+   public PageEntity() {
    }
 
-   public Page(Long id, Integer pageNumber, String content, Chapter chapter, LocalDateTime createdAt) {
+   public PageEntity(Long id, Integer pageNumber, String content, Chapter chapter, LocalDateTime createdAt) {
       this.id = id;
       this.pageNumber = pageNumber;
       this.content = content;

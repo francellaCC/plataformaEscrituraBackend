@@ -33,7 +33,7 @@ public class Chapter {
    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Page> pages = new ArrayList<>();
+    private List<PageEntity> pages = new ArrayList<>();
 
 
    public Chapter() {
@@ -80,12 +80,12 @@ public class Chapter {
       this.createdAt = createdAt;
    }
 
-    public List<Page> getPages() {
+    public List<PageEntity> getPages() {
       return pages;
    }
 
 
-    public void setPages(List<Page> pages) {
+    public void setPages(List<PageEntity> pages) {
        this.pages = pages;
     }
 }

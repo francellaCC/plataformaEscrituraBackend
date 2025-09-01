@@ -10,6 +10,10 @@ public class ChapterResponseDTO {
    private String title;
    private LocalDateTime createdAt;
 
+   public ChapterResponseDTO(){
+      
+   }
+
    public ChapterResponseDTO(Chapter chapter) {
       this.idChapter = chapter.getIdChapter();
       this.title = chapter.getTitle();

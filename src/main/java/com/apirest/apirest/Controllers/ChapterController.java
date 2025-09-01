@@ -47,11 +47,11 @@ public class ChapterController {
    }
 
    @GetMapping("/getChapter/{storyId}/{chapterId}")
-   public ResponseEntity<ChapterWithPagesDTO> getChapterById(@PathVariable Long storyId, @PathVariable Long chapterId,
+   public ResponseEntity<ChapterResponseDTO> getChapterById(@PathVariable Long storyId, @PathVariable Long chapterId,
          @AuthenticationPrincipal Jwt jwt) {
       String email = jwt.getClaimAsString("email");
 
-      return ResponseEntity.ok(chapterService.getChapterWithPages(email, storyId, chapterId));
+      return ResponseEntity.ok(chapterService.getChapterById(email, storyId, chapterId));
    }
 
    @PutMapping("/update/{storyId}/{chapterId}")

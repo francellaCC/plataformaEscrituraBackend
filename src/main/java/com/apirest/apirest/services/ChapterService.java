@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.apirest.apirest.Dtos.ChapterRequestDTO;
 import com.apirest.apirest.Dtos.ChapterResponseDTO;
@@ -54,22 +55,19 @@ public class ChapterService {
 
    }
 
-public ChapterWithPagesDTO getChapterWithPages(String email, Long storyId, Long chapterId) {
+public ChapterResponseDTO getChapterById(String email, Long storyId, Long chapterId) {
     // Validar que la historia es del usuario
     Story story = validateStoryOwnership(storyId, email);
 
-    // Cargar capítulo + páginas
-    Chapter chapter = chapterRepository.findChapterWithPages(chapterId, story.getId())
-        .orElseThrow(() -> new RuntimeException("Chapter not found or doesn't belong to the story"));
+  Chapter chapter = chapterRepository.findByIdChapter(chapterId).orElseThrow(()
+    -> new RuntimeException("Chapter not found or doesn't belong to the story"));
 
-    // Mapear a DTO sin tocar tus otros responses
-    return new ChapterWithPagesDTO(
-        chapter.getIdChapter(),
-        chapter.getTitle(),
-        chapter.getPages().stream()
-            .map(p -> new PageResponseDTO(p.getId(), p.getPageNumber(), p.getContent()))
-            .toList()
-    );
+     // Aseguramos que el capítulo pertenece a la historia indicada
+      if (!chapter.getStory().getId().equals(story.getId())) {
+         throw new RuntimeException("This chapter does not belong to the provided story");
+      }
+
+    return new ChapterResponseDTO(chapter);
 }
 
 
