@@ -36,34 +36,42 @@ public class PageService {
    @Autowired
    private StoryRepository storyRepository;
 
-   public PageResponseDTO createPage(Long storyId, Long chapterId, PageRequestDTO dto, String email) {
-      User user = userRepository.findByEmail(email)
+  public PageResponseDTO createPage(Long storyId, Long chapterId, PageRequestDTO dto, String email) {
+    User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-      Chapter chapter = chapterRepository.findById(chapterId)
+    Chapter chapter = chapterRepository.findById(chapterId)
             .orElseThrow(() -> new RuntimeException("Chapter not found"));
 
-      // Validar que el capítulo pertenece a la historia indicada
-      if (!chapter.getStory().getId().equals(storyId)) {
-         throw new RuntimeException("Chapter does not belong to the provided story");
-      }
+    if (!chapter.getStory().getId().equals(storyId)) {
+        throw new RuntimeException("Chapter does not belong to the provided story");
+    }
 
-      // Validar que el usuario es el autor
-      if (!chapter.getStory().getAuthor().getId().equals(user.getId())) {
-         throw new RuntimeException("Access denied");
-      }
+    if (!chapter.getStory().getAuthor().getId().equals(user.getId())) {
+        throw new RuntimeException("Access denied");
+    }
 
-      PageEntity page = new PageEntity();
-      page.setContent(dto.getContent());
-      System.err.println("Page number recibido: " + dto.getPageNumber());
-      page.setPageNumber(dto.getPageNumber());
-      System.err.println("Page number en entity: " + page.getPageNumber());
-      page.setChapter(chapter);
-      page.setCreatedAt(LocalDateTime.now());
+    PageEntity page;
 
-      PageEntity savedPage = pageRepository.save(page);
-      return new PageResponseDTO(savedPage);
-   }
+    if (dto.getId() != null) {
+        // 🔹 Ya existe → actualizar
+        page = pageRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Page not found"));
+        page.setContent(dto.getContent());
+        page.setPageNumber(dto.getPageNumber());
+    } else {
+        // 🔹 Nueva página → crear
+        page = new PageEntity();
+        page.setContent(dto.getContent());
+        page.setPageNumber(dto.getPageNumber());
+        page.setChapter(chapter);
+        page.setCreatedAt(LocalDateTime.now());
+    }
+
+    PageEntity savedPage = pageRepository.save(page);
+    return new PageResponseDTO(savedPage);
+}
+
 
    public PaginatedPagesDTO getPageByChapterId(Long storyId, Long chapterId, String email, int limit, int offset) {
       User user = userRepository.findByEmail(email)
@@ -122,11 +130,11 @@ public class PageService {
          throw new RuntimeException("Chapter does not belong to the provided story");
       }
 
-      //Validar que la pagina pertenezca al capitulo indicado
-      PageEntity pageEntity = pageRepository.findById(pageId) .orElseThrow(() -> new RuntimeException("Page not found"));
+      // Validar que la pagina pertenezca al capitulo indicado
+      PageEntity pageEntity = pageRepository.findById(pageId).orElseThrow(() -> new RuntimeException("Page not found"));
 
-      if(!pageEntity.getChapter().getIdChapter().equals(chapter.getIdChapter())){
-          throw new RuntimeException("Page does not belong to the provided chapter");
+      if (!pageEntity.getChapter().getIdChapter().equals(chapter.getIdChapter())) {
+         throw new RuntimeException("Page does not belong to the provided chapter");
       }
 
       pageEntity.setContent(dto.getContent());
