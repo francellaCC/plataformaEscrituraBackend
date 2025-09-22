@@ -48,3 +48,8 @@ mysql/
 *.bak
 *.orig
 *.rej
+
+
+# Archivos de configuración local
+.env
+.env.local

@@ -23,9 +23,8 @@ public class PageEntity {
    private Integer pageNumber;
 
 
-   // para que se guarde como tipo TEXT/LONGTEXT en la BD
    @Lob
-   @Column(columnDefinition = "TEXT")
+   @Column(name  = "content" , columnDefinition = "TEXT")
    private String content;
 
    @ManyToOne
