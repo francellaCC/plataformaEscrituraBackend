@@ -20,24 +20,20 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public ResponseEntity<?> createUser(String email, User user) {
+    public UserResponseDTO createUser(String email, User user) {
         Optional<User> existingUser = userRepository.findByEmail(email);
 
-        if (existingUser.isEmpty()) {
-            // No exisate usuario entonces se crea
-            user.setEmail(email);
-            userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Usuario registrado exitosamente"));
-
+       if (existingUser.isEmpty()) {
+        user.setEmail(email);
+        User saved = userRepository.save(user);
+        return new UserResponseDTO(saved);
+    } else {
+        if (existingUser.get().getEmail().equals(email)) {
+            return new UserResponseDTO(existingUser.get());
         } else {
-            // si existe
-            if (existingUser.get().getEmail().equals(email)) {
-                return ResponseEntity.ok(Map.of("message", "Acceso permitido. Usuario ya registrado"));
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido para este usuario");
-            }
+            throw new RuntimeException("Token inválido para este usuario");
         }
-
+    }
     }
 
     public UserResponseDTO getUser(String email) {
