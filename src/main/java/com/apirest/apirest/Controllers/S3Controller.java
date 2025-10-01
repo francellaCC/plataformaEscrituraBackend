@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,32 +21,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/upload")
 public class S3Controller {
 
-    @Autowired
-    private S3Service s3Service;
+        @Autowired
+        private S3Service s3Service;
 
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
+        @Value("${aws.s3.bucket}")
+        private String bucketName;
 
-    @GetMapping("/presigned")
-    public Map<String, String> getPresignedUrl(
-            @RequestParam String filename,
-            @RequestParam String contentType) {
-        String bucket = bucketName;
-        String key = "pages/" + filename;
+        @GetMapping("/presigned")
+        public Map<String, String> getPresignedUrl(
+                        @RequestParam String filename,
+                        @RequestParam String contentType) {
+                String bucket = bucketName;
+                String key = "pages/" + filename;
 
-        URL url = s3Service.generateUploadUrl(bucket, key, contentType);
+                URL url = s3Service.generateUploadUrl(bucket, key, contentType);
 
-        return Map.of(
-                "uploadUrl", url.toString(),
-                "publicUrl", "https://" + bucket + ".s3.amazonaws.com/" + key);
-    }
+                return Map.of(
+                                "uploadUrl", url.toString(),
+                                "publicUrl", "https://" + bucket + ".s3.amazonaws.com/" + key);
+        }
 
-    @PostMapping("/presigned/read/batch")
-    public List<Map<String, String>> getPresignedReadUrl(@RequestBody List<String> keys) {
-        return keys.stream()
-                .map(key -> Map.of(
-                        "key", key,
-                        "url", s3Service.generatePresignedReadUrl(key, bucketName)))
-                .toList();
-    }
+        @PostMapping("/presigned/read/batch")
+        public List<Map<String, String>> getPresignedReadUrl(@RequestBody List<String> keys) {
+                return keys.stream()
+                                .map(key -> Map.of(
+                                                "key", key,
+                                                "url", s3Service.generatePresignedReadUrl(key, bucketName)))
+                                .toList();
+        }
+
+        @PostMapping("/presigned/read")
+        public ResponseEntity<Map<String, String>> getPresignalUrlForReadImagePerfil(
+                        @RequestBody Map<String, String> request) {
+                String key = request.get("key");
+                if (key == null || key.isBlank()) {
+                        return ResponseEntity.badRequest().body(Map.of("error", "Key is required"));
+                }
+
+                String url = s3Service.generatePresignedReadUrl(key, bucketName);
+                return ResponseEntity.ok(Map.of("key", key, "url", url));
+        }
 }

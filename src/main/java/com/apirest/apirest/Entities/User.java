@@ -77,7 +77,7 @@ public class User {
       this.nickname = nickname;
    }
 
-   public String getNickname(String nickname) {
+   public String getNickname() {
       return nickname;
    }
 
