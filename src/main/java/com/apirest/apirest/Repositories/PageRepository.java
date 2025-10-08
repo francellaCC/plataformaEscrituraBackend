@@ -13,5 +13,4 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface PageRepository extends JpaRepository< PageEntity, Long> {
    Page<PageEntity> findByChapter_IdChapterOrderByPageNumberAsc(Long chapterId, Pageable pageable);
-
 }

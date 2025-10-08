@@ -54,6 +54,21 @@ public class ChapterController {
       return ResponseEntity.ok(chapterService.getChapterById(email, storyId, chapterId));
    }
 
+   @GetMapping("/{storyId}/first-chapter")
+   public ResponseEntity<ChapterResponseDTO> getFirstChapter(@PathVariable Long storyId,
+         @AuthenticationPrincipal Jwt jwt) {
+
+      String email = jwt.getClaimAsString("email");
+      return ResponseEntity.ok(chapterService.getChapterByStoryId(email, storyId));
+   }
+      @GetMapping("/next/{storyId}/{currentChapter}")
+   public ResponseEntity<ChapterResponseDTO> getNextChapter(@PathVariable Long storyId,
+         @AuthenticationPrincipal Jwt jwt, @PathVariable Long currentChapter) {
+
+      String email = jwt.getClaimAsString("email");
+      return ResponseEntity.ok(chapterService.getNextChapter(email, storyId, currentChapter));
+   }
+
    @PutMapping("/update/{storyId}/{chapterId}")
    public ResponseEntity<ChapterResponseDTO> updateChapter(@PathVariable Long storyId, @PathVariable Long chapterId,
          @RequestBody ChapterRequestDTO chapterRequestDTO,

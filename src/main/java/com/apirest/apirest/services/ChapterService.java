@@ -22,6 +22,8 @@ import com.apirest.apirest.Repositories.ChapterRepository;
 import com.apirest.apirest.Repositories.StoryRepository;
 import com.apirest.apirest.Repositories.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class ChapterService {
 
@@ -55,21 +57,43 @@ public class ChapterService {
 
    }
 
-public ChapterResponseDTO getChapterById(String email, Long storyId, Long chapterId) {
-    // Validar que la historia es del usuario
-    Story story = validateStoryOwnership(storyId, email);
+   public ChapterResponseDTO getChapterById(String email, Long storyId, Long chapterId) {
+      // Validar que la historia es del usuario
+      Story story = validateStoryOwnership(storyId, email);
 
-  Chapter chapter = chapterRepository.findByIdChapter(chapterId).orElseThrow(()
-    -> new RuntimeException("Chapter not found or doesn't belong to the story"));
+      Chapter chapter = chapterRepository.findByIdChapter(chapterId)
+            .orElseThrow(() -> new RuntimeException("Chapter not found or doesn't belong to the story"));
 
-     // Aseguramos que el capítulo pertenece a la historia indicada
+      // Aseguramos que el capítulo pertenece a la historia indicada
       if (!chapter.getStory().getId().equals(story.getId())) {
          throw new RuntimeException("This chapter does not belong to the provided story");
       }
 
-    return new ChapterResponseDTO(chapter);
-}
+      return new ChapterResponseDTO(chapter);
+   }
 
+   public ChapterResponseDTO getChapterByStoryId(String email, Long storyId) {
+      Story story = validateStoryOwnership(storyId, email);
+      Chapter chapter = chapterRepository.findFirstByStoryIdOrderByIdChapterAsc(story.getId())
+            .orElseThrow(() -> new RuntimeException("No se encontró capítulo para la historia " + story.getId()));
+      return new ChapterResponseDTO(chapter);
+
+   }
+
+   public ChapterResponseDTO getNextChapter(String email, Long storyId, Long currentChapterId) {
+      Story story = validateStoryOwnership(storyId, email);
+      Optional<Chapter> nextChapter = chapterRepository
+            .findFirstByStoryIdAndIdChapterGreaterThanOrderByIdChapterAsc(storyId, currentChapterId);
+
+      if (nextChapter.isEmpty()) {
+         throw new EntityNotFoundException("No hay más capítulos disponibles");
+      }
+      if (!nextChapter.get().getStory().getId().equals(story.getId())) {
+         throw new RuntimeException("This chapter does not belong to the provided story");
+      }
+      return new ChapterResponseDTO(nextChapter.get());
+
+   }
 
    public ChapterResponseDTO updateChapter(Long storyId, Long chapterId, ChapterRequestDTO dto, String email) {
 
