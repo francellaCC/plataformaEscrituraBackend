@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.apirest.apirest.Dtos.StoryRequestDTO;
 import com.apirest.apirest.Dtos.StoryResponseDTO;
+import com.apirest.apirest.Dtos.StoryWithAuthorDTO;
 import com.apirest.apirest.Entities.Story;
 import com.apirest.apirest.Entities.User;
 import com.apirest.apirest.Repositories.StoryRepository;
@@ -60,6 +61,22 @@ public class StoryService {
       return new StoryResponseDTO(story);
    }
 
+   public StoryWithAuthorDTO getStoryWithAuthor(String email, Long storyId) {
+
+      User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+      Story story = storyRepository.findStoryById(storyId)
+            .orElseThrow(() -> new RuntimeException("Story not found"));
+
+      if (!story.getAuthor().getId().equals(user.getId())) {
+         throw new RuntimeException("This chapter does not belong to the provided story");
+      }
+
+      return new StoryWithAuthorDTO(story.getId(), story.getTitle(), story.getCoverImageUrl(), story.getGenre(),
+            user.getId(),
+            user.getPicture(), user.getNickname(), story.getCreatedAt());
+   }
+
    public StoryResponseDTO updateStory(Long id, StoryRequestDTO storyRequestDTO, String email) {
       Optional<User> existingUser = userRepository.findByEmail(email);
 
@@ -87,9 +104,9 @@ public class StoryService {
       Optional<User> existingUser = userRepository.findByEmail(email);
       Story story = storyRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Story not found with id: " + id));
-      
-     if (existingUser.isPresent()) {
-      storyRepository.delete(story);
-     }
+
+      if (existingUser.isPresent()) {
+         storyRepository.delete(story);
+      }
    }
 }

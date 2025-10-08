@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.apirest.apirest.Dtos.StoryRequestDTO;
 import com.apirest.apirest.Dtos.StoryResponseDTO;
+import com.apirest.apirest.Dtos.StoryWithAuthorDTO;
 import com.apirest.apirest.services.StoryService;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.List;
@@ -44,6 +45,11 @@ public class StoryController {
     return ResponseEntity.ok(story);
   }
 
+  @GetMapping("/storyAuthor/{id}")
+  public ResponseEntity<StoryWithAuthorDTO> getStoryWuthAuthor(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id){
+     String email = jwt.getClaimAsString("email");
+     return ResponseEntity.ok(storyService.getStoryWithAuthor(email, id));
+  }
   @PutMapping("/{id}")
   public ResponseEntity<StoryResponseDTO> updateStory(@PathVariable Long id,
       @RequestBody StoryRequestDTO storyRequestDTO, @AuthenticationPrincipal Jwt jwt) {
