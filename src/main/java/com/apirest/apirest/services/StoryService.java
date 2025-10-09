@@ -100,13 +100,17 @@ public class StoryService {
    }
 
    public void deleteStory(Long id, String email) {
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-      Optional<User> existingUser = userRepository.findByEmail(email);
-      Story story = storyRepository.findById(id)
+    Story story = storyRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Story not found with id: " + id));
 
-      if (existingUser.isPresent()) {
-         storyRepository.delete(story);
-      }
-   }
+    if (!story.getAuthor().getId().equals(user.getId())) {
+        throw new RuntimeException("This story does not belong to the authenticated user");
+    }
+
+    storyRepository.delete(story);
+}
+
 }

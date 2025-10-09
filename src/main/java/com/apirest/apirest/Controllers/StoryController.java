@@ -59,9 +59,10 @@ public class StoryController {
   }
 
   @DeleteMapping("/delete/{id}")
-  public ResponseEntity<Void> deleteStory(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
+  public ResponseEntity<String> deleteStory(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
     String email = jwt.getClaimAsString("email");
-    storyService.deleteStory(id, email);
-    return ResponseEntity.noContent().build();
+      storyService.deleteStory(id, email);
+
+   return ResponseEntity.noContent().build();
   }
 }
