@@ -16,8 +16,8 @@ public class Story {
 
    @Column(nullable = false)
    private String title;
-
-   @Column(nullable = true)
+   @Lob
+   @Column(name = "description", columnDefinition = "TEXT", nullable = true)
    private String description;
 
    @Column(nullable = true)
@@ -39,9 +39,9 @@ public class Story {
    @JoinColumn(name = "author_id", nullable = false)
    private User author;
 
-
    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, orphanRemoval = true)
    private List<Chapter> chapter = new ArrayList<>();
+
    public Long getId() {
       return id;
    }
@@ -114,5 +114,4 @@ public class Story {
       this.author = author;
    }
 
-   
 }

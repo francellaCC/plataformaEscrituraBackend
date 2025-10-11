@@ -10,6 +10,7 @@ public class StoryResponseDTO {
    private String description;
    private String coverImageUrl;
    private String visibility;
+   private String genre;
    private String status;
    private LocalDateTime createdAt;
 
@@ -19,11 +20,12 @@ public class StoryResponseDTO {
       this.description = story.getDescription();
       this.coverImageUrl = story.getCoverImageUrl();
       this.visibility = story.getVisibility();
+      this.genre = story.getGenre();
       this.status = story.getStatus();
       this.createdAt = story.getCreatedAt();
    }
 
-   public StoryResponseDTO(Long id, String title, String description, String coverImageUrl, String visibility,
+   public StoryResponseDTO(Long id, String title, String description, String coverImageUrl,String genre, String visibility,
          String status, LocalDateTime createdAt) {
       this.id = id;
       this.title = title;
@@ -32,6 +34,7 @@ public class StoryResponseDTO {
       this.visibility = visibility;
       this.status = status;
       this.createdAt = createdAt;
+      this.genre = genre;
    }
 
    public Long getId() {
@@ -88,6 +91,14 @@ public class StoryResponseDTO {
 
    public void setCreatedAt(LocalDateTime createdAt) {
       this.createdAt = createdAt;
+   }
+
+   public String getGenre() {
+      return genre;
+   }
+
+   public void setGenre(String genre) {
+      this.genre = genre;
    }
 
 }

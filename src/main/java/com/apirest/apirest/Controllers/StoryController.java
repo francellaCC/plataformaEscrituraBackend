@@ -50,7 +50,7 @@ public class StoryController {
      String email = jwt.getClaimAsString("email");
      return ResponseEntity.ok(storyService.getStoryWithAuthor(email, id));
   }
-  @PutMapping("/{id}")
+  @PutMapping("/update/{id}")
   public ResponseEntity<StoryResponseDTO> updateStory(@PathVariable Long id,
       @RequestBody StoryRequestDTO storyRequestDTO, @AuthenticationPrincipal Jwt jwt) {
     String email = jwt.getClaimAsString("email");
